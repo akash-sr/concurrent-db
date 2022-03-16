@@ -1,5 +1,14 @@
 #include "header.h"
 
+void acquire_lock(){
+    char c;
+    read(p[0],&c,1);
+}
+void release_lock(){
+    char c='X';
+    write(p[1],"X",1);
+}
+
 void getRecord(char** request, char* response){
   FILE *fp = fopen("database.txt", "r");
   char record[MAX_REC_SIZE];
@@ -82,8 +91,8 @@ void delRecord(char** request, char* response){
     response[13] = '\0';
   }
   else{
-    strcpy(respone, "OK");
-    respone[2] = '\0';
+    strcpy(response, "OK");
+    response[2] = '\0';
   }
   // fputc(EOF, fpw);
   fclose(fpw);
@@ -130,6 +139,9 @@ int main(int argc, char* argv[]){
   FILE* fp = fopen("database.txt", "w");
   fclose(fp);
 
+  pipe(p);
+  write(p[1],"X",1);
+
   int listenfd, connfd;
   pid_t childpid;
   struct sockaddr_in cliaddr, servaddr;
@@ -174,7 +186,9 @@ int main(int argc, char* argv[]){
           flag = true;
         }
         else{
+          acquire_lock();
           handle_request(inputbuf, outputbuf);
+          release_lock();
           // bzero(inputbuf,MAX_INPUT_SIZE);
           // strcpy(inputbuf, "200 OK");
         }

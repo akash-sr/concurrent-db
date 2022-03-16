@@ -15,3 +15,4 @@
 
 char exitTrigger[] = "Bye";
 char exitResponse[] = "Goodbye";
+int p[2];
