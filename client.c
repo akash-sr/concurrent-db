@@ -35,8 +35,11 @@ int main(int argc, char* argv[]){
 	    fprintf(stderr, "ERROR reading from socket\n");
 	    exit(1);
   	}
+    if(inputbuf[strlen(inputbuf)-1]=='\n')
+      inputbuf[strlen(inputbuf)-1] = '\0';
+    // printf("%s %d\n", inputbuf, strlen(inputbuf));
   	printf("Server replied: %s\n",inputbuf);
-  }while(strncmp(inputbuf, "Goodbye",7));
+  }while(strcmp(inputbuf, exitResponse));
 
   close(sockfd);
   return 0;
